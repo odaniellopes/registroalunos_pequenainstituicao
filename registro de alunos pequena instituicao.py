@@ -12,6 +12,7 @@ usuario+= '\n2- "listar" para listar alunos cadastrados.'
 usuario+='\n3- "buscar" para buscar o nome de um aluno.'
 print(usuario)
 entrada = input('Insira a operação desejada: ').upper().strip()
+print('\n')
 
 
 
@@ -19,14 +20,32 @@ entrada = input('Insira a operação desejada: ').upper().strip()
 def cadastrar_alunos():
     nome_aluno = str(input('Insira o nome completo do aluno: ')).upper()
     email_aluno = str(input('Insira o email do aluno: ')).upper()
-    curso_aluno = str(input('Insira o curso do aluno: ')).upper()
 
-    arquivo = open('registroalunos.txt', 'a')
-    arquivo.write('NOME DO ALUNO:'+ ' ' +nome_aluno +' \n'+ 'EMAIL:'+ ' ' +email_aluno +' \n'+ 'CURSO:'+ ' ' +curso_aluno +'\n\n')
+    #validando email
+    padrao = '@' and '.'
+    if padrao in email_aluno:
+        curso_aluno = str(input('Insira o curso do aluno: ')).upper()
 
-    arquivo.close()
-    print('Aluno cadastrado coom sucesso!')
+        #verificando se já existe ou cadastrando novo
+        arquivo = open('registroalunos.txt', 'a')
+        arquivo.close()
 
+        with open('registroalunos.txt') as f:
+            if nome_aluno in f.read():
+                print(f"Ops! {nome_aluno} já está cadastrado!")
+
+            else:
+                arquivo = open('registroalunos.txt', 'a')
+                arquivo.write(
+                    'NOME DO ALUNO:' + ' ' + nome_aluno + ' \n' + 'EMAIL:' + ' ' + email_aluno + ' \n' + 'CURSO:' + ' ' + curso_aluno + '\n\n')
+                arquivo.close()
+                print('Aluno cadastrado coom sucesso!')
+
+    else:
+        print('\n')
+        print('\t \tEmail inválido. Tente novamente!')
+        print('\n')
+        cadastrar_alunos()
 
 def listar_alunos():
     print('\n\t\t abrindo lista de alunos, aguarde...')
@@ -52,6 +71,15 @@ def buscar_alunos():
         if nome_aluno in f.read():
             print(f"{nome_aluno} Está cadastrado!")
 
+        else:
+            print('Este aluno não está cadastrado.')
+            print('Deseja cadastra-lo?')
+            cadastro = input('sim / não: ').upper().split()
+            if cadastro == 'SIM':
+                cadastrar_alunos()
+            else:
+                print('Fim do progama!')
+
 
 
 #condições do painel de acesso
@@ -67,14 +95,3 @@ elif entrada ==('BUSCAR'):
 else:
     print('Insíra o comando corretamete!')
 
-#fim da codificação.
-#observações finais:
-'''
-Protótipo inicial de um registrador de alunos de uma pequena instituição, temporariamente sem interface gráfica.
-Utilizei de um painel simples para pedir o que o usuário deseja fazer. O cadastro é guardado em um arquivo txt, mas a 
-exibição da lista de alunos cadastrados é feita no terminal. Ao buscar um aluno pelo nome ele exibe o nome completo do
-aluno e informa que ele está cadastrado.
-Com as informações dada pelo usuário, foi possível projetar esse protótipo e entregar ao usuário e com sua opinião, 
-podemos criar um novo protótipo 2.0 com interface gráfica, botões e uma forma mais adequada de busca exibindo as 
-informações do usuário.
-'''
